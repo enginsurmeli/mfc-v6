@@ -43,12 +43,4 @@ extern float max_setpoint;
 const int GasListIndexEEPROMAddress = 28, SetpointEEPROMAddress = 0;
 const char serial_device_id = 'A'; // TODO: Implement device ID for multi-device serial communication.
 
-enum Corner
-{ // Indices for drawMenuRect function.
-  TOP_LEFT = 0,
-  TOP_RIGHT = 1,
-  BOTTOM_LEFT = 2,
-  BOTTOM_RIGHT = 3
-};
-
 #endif

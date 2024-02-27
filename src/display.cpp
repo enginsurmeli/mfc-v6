@@ -1,4 +1,14 @@
 #include "display.h"
+#include "config.h"
+
+enum Corner
+{ // Indices for drawMenuRect function.
+  DEFAULT = -1,
+  TOP_LEFT = 0,
+  TOP_RIGHT = 1,
+  BOTTOM_LEFT = 2,
+  BOTTOM_RIGHT = 3
+};
 
 const uint8_t menu_x_points[] = {9, 113, 9, 113, 3}, menu_y_points[] = {9, 9, 98, 98, 45};
 int8_t current_menu_item = 0;

@@ -1,4 +1,5 @@
 #include "pid.h"
+#include "config.h"
 
 float mfc_sv, mfc_pv, mfc_output, max_setpoint;
 
@@ -11,7 +12,7 @@ float aggKp = 1.5, aggKi = 2.0, aggKd = 0;
 // Define variables for setpoint ramp rate
 float targetSetpoint = 0.0;
 float currentSetpoint = 0.0;
-float setpointIncrement = 0.5;  // Adjust as needed for the desired ramp rate
+float setpointIncrement = 0.5; // Adjust as needed for the desired ramp rate
 
 // Specify the links for PID
 // QuickPID mfcPID(&mfc_pv, &mfc_output, &mfc_sv, aggKp, aggKi, aggKd,
@@ -22,7 +23,8 @@ float setpointIncrement = 0.5;  // Adjust as needed for the desired ramp rate
 
 QuickPID mfcPID(&mfc_pv, &mfc_output, &mfc_sv);
 
-void setupPID() {
+void setupPID()
+{
   //   // Only run the code block below if you are programming this Arduino for the first time.
   // EEPROM.put(4, aggKp);
   // EEPROM.put(8, aggKi);
@@ -39,8 +41,8 @@ void setupPID() {
   EEPROM.get(16, consKp);
   EEPROM.get(20, consKi);
   EEPROM.get(24, consKd);
-  EEPROM.get(GasListIndexEEPROMAddress, gas_list_index);  // Get and set gas_list_index from EEPROM.
-  EEPROM.get(SetpointEEPROMAddress, targetSetpoint);              // Get and set mfc setpoint from EEPROM.
+  EEPROM.get(GasListIndexEEPROMAddress, gas_list_index); // Get and set gas_list_index from EEPROM.
+  EEPROM.get(SetpointEEPROMAddress, targetSetpoint);     // Get and set mfc setpoint from EEPROM.
 
   // if (isnan(float(gas_list_index))) gas_list_index = 0;
   // if (isnan(float(aggKp))) aggKp = 0.15;
@@ -50,7 +52,8 @@ void setupPID() {
   // if (isnan(float(consKd))) consKd = 0.02;
   // if (isnan(float(consKp))) consKp = 0.00;
   max_setpoint = mfc_flowrate_range * gas_multiplier[gas_list_index];
-  if (max_setpoint > 9999.9) max_setpoint = 9999.9;
+  if (max_setpoint > 9999.9)
+    max_setpoint = 9999.9;
 
   // Set PID tune parameters:
   mfcPID.SetTunings(aggKp, aggKi, aggKd);
@@ -64,20 +67,25 @@ void setupPID() {
   pinMode(LOWpin, OUTPUT);
   digitalWrite(LOWpin, LOW);
 
-  abortFlow();  // Make the setpoint and output zero on every reset
+  abortFlow(); // Make the setpoint and output zero on every reset
 }
 
-void runPID() {
+void runPID()
+{
   incrementSetpoint();
   // static int agg_cons_cutoff_point = mfc_sv / 10
-  if (targetSetpoint == 0) {
+  if (targetSetpoint == 0)
+  {
     abortFlow();
     return;
   }
 
-  if (mfc_pv < 1) {
+  if (mfc_pv < 1)
+  {
     mfcPID.SetTunings(aggKp, aggKi, aggKd);
-  } else {
+  }
+  else
+  {
     mfcPID.SetTunings(consKp, consKi, consKd);
   }
 
@@ -87,13 +95,17 @@ void runPID() {
   analogWrite(MFCOutPin, mfc_output);
 }
 
-void incrementSetpoint() {
+void incrementSetpoint()
+{
   // Update setpoint gradually
-  if (currentSetpoint < targetSetpoint) {
+  if (currentSetpoint < targetSetpoint)
+  {
     currentSetpoint += setpointIncrement;
     // Ensure currentSetpoint does not exceed targetSetpoint
     currentSetpoint = min(currentSetpoint, targetSetpoint);
-  } else if (currentSetpoint > targetSetpoint) {
+  }
+  else if (currentSetpoint > targetSetpoint)
+  {
     currentSetpoint -= setpointIncrement;
     // Ensure currentSetpoint does not go below targetSetpoint
     currentSetpoint = max(currentSetpoint, targetSetpoint);
@@ -101,7 +113,8 @@ void incrementSetpoint() {
   mfc_sv = currentSetpoint;
 }
 
-void abortFlow() {
+void abortFlow()
+{
   mfcPID.SetMode(mfcPID.Control::manual);
   mfc_output = 0;
   digitalWrite(HIGHpin, LOW);
