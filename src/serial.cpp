@@ -1,8 +1,8 @@
 #include "config.h"
 
 bool data_stream_on;
-unsigned long previousMillis_serial; // previousMillis: will store last time serial stream was updated
-long serial_print_interval = 500;    // interval at which to stream serial data (milliseconds)
+unsigned long previousMillis_serial;       // previousMillis: will store last time serial stream was updated
+unsigned long serial_print_interval = 500; // interval at which to stream serial data (milliseconds)
 
 const uint8_t SERIAL_MAX_MESSAGE_LENGTH = 30;
 char *token;
@@ -199,7 +199,7 @@ void serialListen()
 void serialStream()
 {
   unsigned long currentMillis_print = millis();
-  if (data_stream_on && currentMillis_print - previousMillis_serial >= serial_print_interval)
+  if (data_stream_on && (currentMillis_print - previousMillis_serial >= serial_print_interval))
   {
     previousMillis_serial = currentMillis_print;
 

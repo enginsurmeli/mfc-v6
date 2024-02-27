@@ -7,8 +7,8 @@ bool change_setpoint_active, select_gas_active;
 
 float prev_mfc_sv, prev_mfc_pv, temp_mfc_sv;
 
-unsigned long previousMillis_lcd; // previousMillis: will store last time lcd was updated
-long lcd_refresh_interval = 250;  // interval at which to refresh lcd (milliseconds)
+unsigned long previousMillis_lcd;         // previousMillis: will store last time lcd was updated
+unsigned long lcd_refresh_interval = 250; // interval at which to refresh lcd (milliseconds)
 
 // create an instance of the library
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
