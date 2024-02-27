@@ -1,14 +1,5 @@
-#include "display.h"
+// #include "display.h"
 #include "config.h"
-
-enum Corner
-{ // Indices for drawMenuRect function.
-  DEFAULT = -1,
-  TOP_LEFT = 0,
-  TOP_RIGHT = 1,
-  BOTTOM_LEFT = 2,
-  BOTTOM_RIGHT = 3
-};
 
 const uint8_t menu_x_points[] = {9, 113, 9, 113, 3}, menu_y_points[] = {9, 9, 98, 98, 45};
 int8_t current_menu_item = 0;
@@ -323,10 +314,10 @@ void updateOnEachIteration()
   }
 }
 
-void drawMenuRect(Corner firstCorner = -1, Corner lastCorner = -1)
+void drawMenuRect(Corner firstCorner, Corner lastCorner)
 {
-  if (firstCorner != -1 && lastCorner != -1)
-  { // If the function is called without arguments (so they are assigned to default values -1 both), just draw a rectangle in the current menu item's position.
+  if (firstCorner != Corner::NONE && lastCorner != Corner::NONE)
+  { // If the function is called without arguments (so they are assigned to default values of "NONE" both), just draw a rectangle in the current menu item's position.
     tft.drawRect(menu_x_points[current_menu_item] - 3, menu_y_points[current_menu_item] - 3, 40, 26, Display_Background_Color);
     current_menu_item += encoder_diff;
     current_menu_item = constrain(current_menu_item, firstCorner, lastCorner);
