@@ -1,14 +1,14 @@
 #include "display.h"
 
-const uint8_t menu_x_points[] = { 9, 113, 9, 113, 3 }, menu_y_points[] = { 9, 9, 98, 98, 45 };
+const uint8_t menu_x_points[] = {9, 113, 9, 113, 3}, menu_y_points[] = {9, 9, 98, 98, 45};
 int8_t current_menu_item = 0;
 int8_t current_page, last_page;
 bool change_setpoint_active, select_gas_active;
 
 float prev_mfc_sv, prev_mfc_pv, temp_mfc_sv;
 
-unsigned long previousMillis_lcd;  // previousMillis: will store last time lcd was updated
-long lcd_refresh_interval = 250;   // interval at which to refresh lcd (milliseconds)
+unsigned long previousMillis_lcd; // previousMillis: will store last time lcd was updated
+long lcd_refresh_interval = 250;  // interval at which to refresh lcd (milliseconds)
 
 // create an instance of the library
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
@@ -51,8 +51,9 @@ int8_t encoder_diff;
 
 int8_t temp_gas_list_index, prev_gas_list_index;
 
-void setupDisplay() {
-  tft.initR(INITR_BLACKTAB);  // Init ST7735S chip, black tab
+void setupDisplay()
+{
+  tft.initR(INITR_BLACKTAB); // Init ST7735S chip, black tab
   tft.setRotation(3);
   tft.setFont();
   tft.fillScreen(Display_Background_Color);
@@ -68,85 +69,102 @@ void setupDisplay() {
   pinMode(PUSH_BTN, INPUT_PULLUP);
 }
 
-void updateDisplay() {
+void updateDisplay()
+{
   updateOnButtonPush();
   updateOnEncoderRotation();
   updateOnPageChange();
   updateOnEachIteration();
 }
 
-void updateOnButtonPush() {
-  if (digitalRead(PUSH_BTN) == LOW) {  // Check if the button is pressed.
-    switch (current_page) {
-      case 0:  // home page
-        current_page = current_menu_item + 1;
-        break;
-      case 1:  // setpoint page
-        if (change_setpoint_active) {
-          change_setpoint_active = 0;
-          drawMenuRect();
-        } else {
-          switch (current_menu_item) {
-            case 2:
-              targetSetpoint = temp_mfc_sv;
-              EEPROM.put(SetpointEEPROMAddress, targetSetpoint);  // Put mfc setpoint to EEPROM.
-              current_page = 0;
-              break;
-            case 3:
-              temp_mfc_sv = targetSetpoint;
-              current_page = 0;
-              break;
-            default:
-              break;
-          }
+void updateOnButtonPush()
+{
+  if (digitalRead(PUSH_BTN) == LOW)
+  { // Check if the button is pressed.
+    switch (current_page)
+    {
+    case 0: // home page
+      current_page = current_menu_item + 1;
+      break;
+    case 1: // setpoint page
+      if (change_setpoint_active)
+      {
+        change_setpoint_active = 0;
+        drawMenuRect();
+      }
+      else
+      {
+        switch (current_menu_item)
+        {
+        case 2:
+          targetSetpoint = temp_mfc_sv;
+          EEPROM.put(SetpointEEPROMAddress, targetSetpoint); // Put mfc setpoint to EEPROM.
+          current_page = 0;
+          break;
+        case 3:
+          temp_mfc_sv = targetSetpoint;
+          current_page = 0;
+          break;
+        default:
+          break;
         }
-        break;
-      case 2:  // gas select page
-        if (select_gas_active) {
-          select_gas_active = 0;
-          drawMenuRect();
-        } else {
-          switch (current_menu_item) {
-            case 2:
-              gas_list_index = temp_gas_list_index;
-              EEPROM.put(GasListIndexEEPROMAddress, gas_list_index % 9);  // Put gas_list_index to EEPROM.
-              current_page = 0;
-              break;
-            case 3:
-              temp_gas_list_index = gas_list_index;
-              current_page = 0;
-              break;
-            default:
-              break;
-          }
+      }
+      break;
+    case 2: // gas select page
+      if (select_gas_active)
+      {
+        select_gas_active = 0;
+        drawMenuRect();
+      }
+      else
+      {
+        switch (current_menu_item)
+        {
+        case 2:
+          gas_list_index = temp_gas_list_index;
+          EEPROM.put(GasListIndexEEPROMAddress, gas_list_index % 9); // Put gas_list_index to EEPROM.
+          current_page = 0;
+          break;
+        case 3:
+          temp_gas_list_index = gas_list_index;
+          current_page = 0;
+          break;
+        default:
+          break;
         }
-        break;
-      case 3:  // totalizer page
-        current_page = 0;
-        break;
-      default:
-        break;
+      }
+      break;
+    case 3: // totalizer page
+      current_page = 0;
+      break;
+    default:
+      break;
     }
     // Wait until button released (demo only! Blocking call!)
-    while (digitalRead(PUSH_BTN) == LOW) {
+    while (digitalRead(PUSH_BTN) == LOW)
+    {
       delay(1);
     }
   }
 }
 
-void updateOnEncoderRotation() {
+void updateOnEncoderRotation()
+{
   encoder.tick();
   encoderNewPos = encoder.getPosition();
-  if (encoderLastPos != encoderNewPos) {  // Check if the rotary encoder state has changed.
+  if (encoderLastPos != encoderNewPos)
+  { // Check if the rotary encoder state has changed.
 
     // accelerate when there was a previous rotation in the same direction.
     unsigned long ms = encoder.getMillisBetweenRotations();
 
-    if (ms < longCutoff) {
+    if (ms < longCutoff)
+    {
       // do some acceleration using factors a and b
 
       // limit to maximum acceleration
-      if (ms < shortCutoff) {
+      if (ms < shortCutoff)
+      {
         ms = shortCutoff;
       }
 
@@ -158,132 +176,147 @@ void updateOnEncoderRotation() {
     }
     encoder_diff = encoderNewPos - encoderLastPos;
 
-    switch (current_page) {
-      case 0:  // home page
-        drawMenuRect(TOP_LEFT, BOTTOM_LEFT);
-        break;
+    switch (current_page)
+    {
+    case 0: // home page
+      drawMenuRect(TOP_LEFT, BOTTOM_LEFT);
+      break;
 
-      case 1:  // setpoint page
-        if (change_setpoint_active) {
-          temp_mfc_sv += encoder_diff;
-          temp_mfc_sv = constrain(temp_mfc_sv, 0, max_setpoint);
-        } else {
-          drawMenuRect(BOTTOM_LEFT, BOTTOM_RIGHT);
-        }
+    case 1: // setpoint page
+      if (change_setpoint_active)
+      {
+        temp_mfc_sv += encoder_diff;
+        temp_mfc_sv = constrain(temp_mfc_sv, 0, max_setpoint);
+      }
+      else
+      {
+        drawMenuRect(BOTTOM_LEFT, BOTTOM_RIGHT);
+      }
 
-        break;
-      case 2:  // gas select page
-        if (select_gas_active) {
-          temp_gas_list_index += encoder_diff;
-          temp_gas_list_index = constrain(temp_gas_list_index, 0, gas_list_length - 1);
-        } else {
-          drawMenuRect(BOTTOM_LEFT, BOTTOM_RIGHT);
-        }
-        break;
-      case 3:  // totalizer page
-        break;
-      default:
-        break;
+      break;
+    case 2: // gas select page
+      if (select_gas_active)
+      {
+        temp_gas_list_index += encoder_diff;
+        temp_gas_list_index = constrain(temp_gas_list_index, 0, gas_list_length - 1);
+      }
+      else
+      {
+        drawMenuRect(BOTTOM_LEFT, BOTTOM_RIGHT);
+      }
+      break;
+    case 3: // totalizer page
+      break;
+    default:
+      break;
     }
     encoderLastPos = encoderNewPos;
   }
 }
 
-void updateOnPageChange() {
-  if (last_page != current_page) {  // Update these elements once only if the page is changed.
+void updateOnPageChange()
+{
+  if (last_page != current_page)
+  { // Update these elements once only if the page is changed.
     last_page = current_page;
     tft.fillScreen(Display_Background_Color);
-    switch (current_page) {
+    switch (current_page)
+    {
 
-      case 0:  // home page
-        current_menu_item = 0;
-        prev_mfc_pv = -1;  // Force the display to update.
+    case 0: // home page
+      current_menu_item = 0;
+      prev_mfc_pv = -1; // Force the display to update.
 
-        printTextOnScreen(1, menu_x_points[0], menu_y_points[0], "", "SETPNT");
+      printTextOnScreen(1, menu_x_points[0], menu_y_points[0], "", "SETPNT");
 
-        printTextOnScreen(1, menu_x_points[1], menu_y_points[1], "", "SELECT");
-        printTextOnScreen(1, menu_x_points[1] + 8, menu_y_points[1] + 12, "", "GAS");
+      printTextOnScreen(1, menu_x_points[1], menu_y_points[1], "", "SELECT");
+      printTextOnScreen(1, menu_x_points[1] + 8, menu_y_points[1] + 12, "", "GAS");
 
-        printTextOnScreen(1, menu_x_points[2] + 3, menu_y_points[2], "", "mm:ss");
-        printTextOnScreen(1, menu_x_points[2], menu_y_points[2] + 12, "", "TOTLZR");
+      printTextOnScreen(1, menu_x_points[2] + 3, menu_y_points[2], "", "mm:ss");
+      printTextOnScreen(1, menu_x_points[2], menu_y_points[2] + 12, "", "TOTLZR");
 
-        printTextOnScreen(1, 128, 50, "", "SCCM");
-        printTextOnScreen(1, 128, 62, "", gas_list[gas_list_index]);
+      printTextOnScreen(1, 128, 50, "", "SCCM");
+      printTextOnScreen(1, 128, 62, "", gas_list[gas_list_index]);
 
-        drawMenuRect();
+      drawMenuRect();
 
-        break;
-      case 1:  // setpoint page
-        change_setpoint_active = 1;
-        current_menu_item = 2;
-        prev_mfc_sv = -1;  // Force the display to update.
-        // temp_mfc_sv = targetSetpoint;
+      break;
+    case 1: // setpoint page
+      change_setpoint_active = 1;
+      current_menu_item = 2;
+      prev_mfc_sv = -1; // Force the display to update.
+      // temp_mfc_sv = targetSetpoint;
 
-        printTextOnScreen(2, 30, 15, "", "Setpoint:");
-        printTextOnScreen(1, menu_x_points[2] + 8, menu_y_points[2] + 7, "", "SET");
-        printTextOnScreen(1, menu_x_points[3], menu_y_points[3] + 7, "", "CANCEL");
+      printTextOnScreen(2, 30, 15, "", "Setpoint:");
+      printTextOnScreen(1, menu_x_points[2] + 8, menu_y_points[2] + 7, "", "SET");
+      printTextOnScreen(1, menu_x_points[3], menu_y_points[3] + 7, "", "CANCEL");
 
-        break;
+      break;
 
-      case 2:  // gas select page
-        select_gas_active = 1;
-        current_menu_item = 2;
-        prev_gas_list_index = -1;  // Force the display to update.
-        // temp_gas_list_index = gas_list_index;
+    case 2: // gas select page
+      select_gas_active = 1;
+      current_menu_item = 2;
+      prev_gas_list_index = -1; // Force the display to update.
+      // temp_gas_list_index = gas_list_index;
 
-        printTextOnScreen(2, 15, 15, "", "Select Gas:");
-        printTextOnScreen(1, menu_x_points[2] + 8, menu_y_points[2] + 7, "", "SET");
-        printTextOnScreen(1, menu_x_points[3], menu_y_points[3] + 7, "", "CANCEL");
+      printTextOnScreen(2, 15, 15, "", "Select Gas:");
+      printTextOnScreen(1, menu_x_points[2] + 8, menu_y_points[2] + 7, "", "SET");
+      printTextOnScreen(1, menu_x_points[3], menu_y_points[3] + 7, "", "CANCEL");
 
-        break;
+      break;
 
-      case 3:  // totalizer page
-        // set_totalizer_active = 1;
-        current_menu_item = 2;
+    case 3: // totalizer page
+      // set_totalizer_active = 1;
+      current_menu_item = 2;
 
-        printTextOnScreen(2, 25, 15, "", "Totalizer:");
-        printTextOnScreen(1, menu_x_points[2] + 8, menu_y_points[2] + 7, "", "SET");
-        printTextOnScreen(1, menu_x_points[3], menu_y_points[3] + 7, "", "CANCEL");
+      printTextOnScreen(2, 25, 15, "", "Totalizer:");
+      printTextOnScreen(1, menu_x_points[2] + 8, menu_y_points[2] + 7, "", "SET");
+      printTextOnScreen(1, menu_x_points[3], menu_y_points[3] + 7, "", "CANCEL");
 
-        break;
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   }
 }
 
-void updateOnEachIteration() {
+void updateOnEachIteration()
+{
   static char buffer1[6];
   static char buffer2[6];
 
-  if (millis() - previousMillis_lcd >= lcd_refresh_interval) {  // Continously update these items according to page number. Like 'mfc_pv' etc...
+  if (millis() - previousMillis_lcd >= lcd_refresh_interval)
+  { // Continously update these items according to page number. Like 'mfc_pv' etc...
     previousMillis_lcd = millis();
-    switch (current_page) {
-      case 0:  // home page
-        printNumOnScreen(4, 24, 48, prev_mfc_pv, mfc_pv, buffer1);
-        printNumOnScreen(1, menu_x_points[0] + 8, menu_y_points[0] + 12, prev_mfc_sv, targetSetpoint, buffer2);
-        break;
+    switch (current_page)
+    {
+    case 0: // home page
+      printNumOnScreen(4, 24, 48, prev_mfc_pv, mfc_pv, buffer1);
+      printNumOnScreen(1, menu_x_points[0] + 8, menu_y_points[0] + 12, prev_mfc_sv, targetSetpoint, buffer2);
+      break;
 
-      case 1:  // setpoint page
-        printNumOnScreen(4, 34, 48, prev_mfc_sv, temp_mfc_sv, buffer2);
-        break;
+    case 1: // setpoint page
+      printNumOnScreen(4, 34, 48, prev_mfc_sv, temp_mfc_sv, buffer2);
+      break;
 
-      case 2:  // gas select page
-        printTextOnScreen(4, 34, 48, gas_list[prev_gas_list_index], gas_list[temp_gas_list_index]);
-        prev_gas_list_index = temp_gas_list_index;
-        break;
+    case 2: // gas select page
+      printTextOnScreen(4, 34, 48, gas_list[prev_gas_list_index], gas_list[temp_gas_list_index]);
+      prev_gas_list_index = temp_gas_list_index;
+      break;
 
-      case 3:  // totalizer page
-        break;
-      default:
-        break;
+    case 3: // totalizer page
+      break;
+    default:
+      break;
     }
   }
 }
 
-void drawMenuRect(Corner firstCorner = -1, Corner lastCorner = -1) {
-  if (firstCorner != -1 && lastCorner != -1) {  // If the function is called without arguments (so they are assigned to default values -1 both), just draw a rectangle in the current menu item's position.
+void drawMenuRect(Corner firstCorner = -1, Corner lastCorner = -1)
+{
+  if (firstCorner != -1 && lastCorner != -1)
+  { // If the function is called without arguments (so they are assigned to default values -1 both), just draw a rectangle in the current menu item's position.
     tft.drawRect(menu_x_points[current_menu_item] - 3, menu_y_points[current_menu_item] - 3, 40, 26, Display_Background_Color);
     current_menu_item += encoder_diff;
     current_menu_item = constrain(current_menu_item, firstCorner, lastCorner);
@@ -291,51 +324,62 @@ void drawMenuRect(Corner firstCorner = -1, Corner lastCorner = -1) {
   tft.drawRect(menu_x_points[current_menu_item] - 3, menu_y_points[current_menu_item] - 3, 40, 26, Display_Text_Color);
 }
 
-void printNumOnScreen(int textSize, int cursorX, int cursorY, float& prevValue, float newValue, char* buffer) {
+void printNumOnScreen(int textSize, int cursorX, int cursorY, float &prevValue, float newValue, char *buffer)
+{
   tft.setTextSize(textSize);
-  if (prevValue != newValue) {
+  if (prevValue != newValue)
+  {
     tft.setCursor(cursorX, cursorY);
     tft.setTextColor(Display_Background_Color);
-    tft.print(buffer);  // delete previous value
+    tft.print(buffer); // delete previous value
     prevValue = newValue;
   }
   tft.setCursor(cursorX, cursorY);
   tft.setTextColor(Display_Text_Color);
   dtostrf(newValue, 4, 0, buffer);
-  tft.print(buffer);  // print new value
+  tft.print(buffer); // print new value
 }
 
-void printTextOnScreen(int textSize, int cursorX, int cursorY, const char* prevText, const char* newText) {
+void printTextOnScreen(int textSize, int cursorX, int cursorY, const char *prevText, const char *newText)
+{
   tft.setTextSize(textSize);
-  if (strcmp(prevText, newText)) {  // If two strings are equal, strcmp will return 0.
+  if (strcmp(prevText, newText))
+  { // If two strings are equal, strcmp will return 0.
     tft.setCursor(cursorX, cursorY);
     tft.setTextColor(Display_Background_Color);
-    tft.print(prevText);  // delete previous text.
+    tft.print(prevText); // delete previous text.
   }
   tft.setCursor(cursorX, cursorY);
   tft.setTextColor(Display_Text_Color);
-  tft.print(newText);  // print new text
+  tft.print(newText); // print new text
 }
 
 // Note: checkEncoderButton() and checkEncoderRotation() were written for future implementation to make maintaining the code easier.
-bool checkEncoderButton() {
-  if (digitalRead(PUSH_BTN) == LOW) return true;
-  else return false;
+bool checkEncoderButton()
+{
+  if (digitalRead(PUSH_BTN) == LOW)
+    return true;
+  else
+    return false;
 }
 
-int8_t checkEncoderRotation() {
+int8_t checkEncoderRotation()
+{
   encoder.tick();
   encoderNewPos = encoder.getPosition();
-  if (encoderLastPos != encoderNewPos) {  // Check if the rotary encoder state has changed.
+  if (encoderLastPos != encoderNewPos)
+  { // Check if the rotary encoder state has changed.
 
     // accelerate when there was a previous rotation in the same direction.
     unsigned long ms = encoder.getMillisBetweenRotations();
 
-    if (ms < longCutoff) {
+    if (ms < longCutoff)
+    {
       // do some acceleration using factors a and b
 
       // limit to maximum acceleration
-      if (ms < shortCutoff) {
+      if (ms < shortCutoff)
+      {
         ms = shortCutoff;
       }
 
@@ -348,4 +392,5 @@ int8_t checkEncoderRotation() {
     encoder_diff = encoderNewPos - encoderLastPos;
   }
   encoderLastPos = encoderNewPos;
+  return encoder_diff;
 }
