@@ -1,4 +1,3 @@
-// #include "display.h"
 #include "config.h"
 
 const uint8_t menu_x_points[] = {9, 113, 9, 113, 3}, menu_y_points[] = {9, 9, 98, 98, 45};

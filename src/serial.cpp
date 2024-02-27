@@ -1,4 +1,3 @@
-#include "serial.h"
 #include "config.h"
 
 bool data_stream_on;

@@ -5,11 +5,9 @@
 #include <Adafruit_ST7789.h>
 #include <Adafruit_ST77xx.h>
 #include <RotaryEncoder.h>
-// #include "pid.h"
-// #include "config.h"
 
 enum Corner
-{ // Indices for drawMenuRect function.
+{ // Indices for drawMenuRect function. If drawMenuRect() is called without arguments (so they are assigned to default values of "NONE" both), it just draws a rectangle in the current menu item's position.
     TOP_LEFT,
     TOP_RIGHT,
     BOTTOM_LEFT,

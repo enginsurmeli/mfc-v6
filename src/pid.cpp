@@ -1,4 +1,3 @@
-#include "pid.h"
 #include "config.h"
 
 float mfc_sv, mfc_pv, mfc_output, max_setpoint;

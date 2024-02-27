@@ -1,4 +1,3 @@
-#include "flow_sensor.h"
 #include "config.h"
 
 // define calibration coefficients for each model (2nd degree poly fit. in the form of a*x^2 + b*x + c)
