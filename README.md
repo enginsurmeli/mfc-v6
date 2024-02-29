@@ -1,6 +1,6 @@
 # Mass Flow Controller (MFC) Project
 
-![MFC Demo](src/mfc_demo.jpg)
+![MFC Demo](src/mfc_demo.png)
 
 ## Overview
 The Mass Flow Controller (MFC) Project focuses on the development of a custom electronic PCB and software solution for precise control and monitoring of gas flow rates. The project aims to create an affordable yet high-performance MFC system suitable for various industrial applications.
