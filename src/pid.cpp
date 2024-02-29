@@ -66,7 +66,7 @@ void setupPID()
   pinMode(LOWpin, OUTPUT);
   digitalWrite(LOWpin, LOW);
 
-  abortFlow(); // Make the setpoint and output zero on every reset
+  abortFlow(); // Make the output zero on every reset, if the setpoint is > 0 it pid will automatically start the flow.
 }
 
 void runPID()
@@ -79,7 +79,7 @@ void runPID()
     return;
   }
 
-  if (mfc_pv < 1)
+  if (mfc_pv < 1 && mfc_output < 100)
   {
     mfcPID.SetTunings(aggKp, aggKi, aggKd);
   }
