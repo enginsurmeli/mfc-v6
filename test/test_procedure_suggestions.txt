@@ -1,14 +1,12 @@
 1. Test the initialization process:
 
 - Verify that the serial communication is properly initialized.
-- Check if the "Initializing..." message is printed correctly.
 - Ensure that the display setup and PID setup functions are called.
 
 2. Test the main loop:
 
 - Simulate serial input and verify if the serialListen function is called.
 - Test the reading of the flow rate and check if the readFlowRate function is called.
-- Verify if the PID control is executed by checking if the runPID function is called.
+- Verify that PID control function is executed by checking if the runPID function is called.
 - Test the serial streaming and check if the serialStream function is called.
 - Verify if the display is updated by checking if the updateDisplay function is called.
-- Ensure that there is a delay of 5 milliseconds between iterations.
