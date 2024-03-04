@@ -1,7 +1,8 @@
 #include "config.h"
 
-int main()
+int main(void)
 {
+  init();
   Serial.begin(115200);
   Serial.println("Initializing...");
   setupDisplay();

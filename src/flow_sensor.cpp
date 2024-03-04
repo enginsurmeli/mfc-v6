@@ -10,7 +10,7 @@ const float calibration_coeff_b2 = -0.998101989;
 const float calibration_coeff_c2 = 108.9509672;
 
 const float gas_multiplier[] = {1.0340, 0.8200, 1.6700, 1.0540, 1.2340, 1.7200, 1.7800, 1.9600, 2.2000, 2.1000, 0.9480, 1.0000, 1.2380, 0.6040, 0.9100, 0.7400, 0.8000, 1.1760};
-const float mfc_flowrate_range = 1248.0; // Change this according to MFC's specified max flow rate.
+const float mfc_flowrate_range = 1000.0; // Change this according to MFC's specified max flow rate.
 const uint8_t gas_list_length = sizeof(gas_multiplier) / sizeof(gas_multiplier[0]);
 
 const int numreadings = 10; // Reduce this number if you want to gain more RAM.

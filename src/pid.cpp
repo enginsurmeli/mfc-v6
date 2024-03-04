@@ -79,7 +79,7 @@ void runPID()
     return;
   }
 
-  if (mfc_pv < 1 && mfc_output < 100)
+  if (mfc_pv < 1 && mfc_output < 50.0)
   {
     mfcPID.SetTunings(aggKp, aggKi, aggKd);
   }
