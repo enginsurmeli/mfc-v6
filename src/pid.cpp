@@ -13,6 +13,9 @@ float targetSetpoint = 0.0;
 float currentSetpoint = 0.0;
 float setpointIncrement = 0.5; // Adjust as needed for the desired ramp rate
 
+// Define PWM frequency
+const uint32_t pwm_frequency = 11800; // in Hz
+
 // Specify the links for PID
 // QuickPID mfcPID(&mfc_pv, &mfc_output, &mfc_sv, aggKp, aggKi, aggKd,
 //                 mfcPID.pMode::pOnError, /* pOnError, pOnMeas, pOnErrorMeas */
@@ -61,6 +64,15 @@ void setupPID()
   mfcPID.SetDerivativeMode(mfcPID.dMode::dOnMeas);
   // mfcPID.SetSampleTimeUs(pid_sample_time * 1000);  // Convert pid_sample_time units from milliseconds to microseconds.
 
+  InitTimersSafe(1); // initialize all timers except for 0, to save time keeping functions
+
+  const bool pwm_frequency_set = SetPinFrequencySafe(MFCOutPin, pwm_frequency);
+  if (!pwm_frequency_set)
+  {
+    Serial.println("Failed to set PWM frequency!");
+  }
+
+  // Set AIN1 and STBY pins of TB6612FNG to HIGH and AIN2 to LOW.
   pinMode(HIGHpin, OUTPUT);
   digitalWrite(HIGHpin, LOW);
   pinMode(LOWpin, OUTPUT);
@@ -91,7 +103,7 @@ void runPID()
   digitalWrite(HIGHpin, HIGH);
   mfcPID.SetMode(mfcPID.Control::automatic);
   mfcPID.Compute();
-  analogWrite(MFCOutPin, mfc_output);
+  pwmWrite(MFCOutPin, mfc_output);
 }
 
 void incrementSetpoint()
@@ -117,5 +129,5 @@ void abortFlow()
   mfcPID.SetMode(mfcPID.Control::manual);
   mfc_output = 0;
   digitalWrite(HIGHpin, LOW);
-  analogWrite(MFCOutPin, 0);
+  pwmWrite(MFCOutPin, 0);
 }
