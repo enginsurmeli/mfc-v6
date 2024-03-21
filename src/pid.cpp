@@ -64,7 +64,7 @@ void setupPID()
   mfcPID.SetDerivativeMode(mfcPID.dMode::dOnMeas);
   // mfcPID.SetSampleTimeUs(pid_sample_time * 1000);  // Convert pid_sample_time units from milliseconds to microseconds.
 
-  InitTimersSafe(1); // initialize all timers except for 0, to save time keeping functions
+  InitTimersSafe(12000); // initialize all timers except for 0, to save time keeping functions
 
   const bool pwm_frequency_set = SetPinFrequencySafe(MFCOutPin, pwm_frequency);
   if (!pwm_frequency_set)
