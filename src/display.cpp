@@ -226,6 +226,7 @@ void updateOnPageChange()
     case 0: // home page
       current_menu_item = 0;
       prev_mfc_pv = -1; // Force the display to update.
+      prev_mfc_sv = -1; // Force the display to update.
 
       printTextOnScreen(1, menu_x_points[0], menu_y_points[0], "", "SETPNT");
 
@@ -332,12 +333,14 @@ void printNumOnScreen(int textSize, int cursorX, int cursorY, float &prevValue, 
     tft.setCursor(cursorX, cursorY);
     tft.setTextColor(Display_Background_Color);
     tft.print(buffer); // delete previous value
+
     prevValue = newValue;
+
+    tft.setCursor(cursorX, cursorY);
+    tft.setTextColor(Display_Text_Color);
+    dtostrf(newValue, 4, 0, buffer);
+    tft.print(buffer); // print new value
   }
-  tft.setCursor(cursorX, cursorY);
-  tft.setTextColor(Display_Text_Color);
-  dtostrf(newValue, 4, 0, buffer);
-  tft.print(buffer); // print new value
 }
 
 void printTextOnScreen(int textSize, int cursorX, int cursorY, const char *prevText, const char *newText)
@@ -348,10 +351,11 @@ void printTextOnScreen(int textSize, int cursorX, int cursorY, const char *prevT
     tft.setCursor(cursorX, cursorY);
     tft.setTextColor(Display_Background_Color);
     tft.print(prevText); // delete previous text.
+
+    tft.setCursor(cursorX, cursorY);
+    tft.setTextColor(Display_Text_Color);
+    tft.print(newText); // print new text.
   }
-  tft.setCursor(cursorX, cursorY);
-  tft.setTextColor(Display_Text_Color);
-  tft.print(newText); // print new text.
 }
 
 // Note: checkEncoderButton() and checkEncoderRotation() were written for future implementation to make maintaining the code easier.
