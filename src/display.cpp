@@ -7,8 +7,9 @@ bool change_setpoint_active, select_gas_active;
 
 float prev_mfc_sv, prev_mfc_pv, temp_mfc_sv;
 
-unsigned long previousMillis_lcd;         // previousMillis: will store last time lcd was updated
-unsigned long lcd_refresh_interval = 250; // interval at which to refresh lcd (milliseconds)
+unsigned long previousMillis_lcd;                             // previousMillis: will store last time lcd was updated
+const uint16_t lcd_refresh_rate = 60;                         // refresh rate of lcd (Hz)
+unsigned long lcd_refresh_interval = 1000 / lcd_refresh_rate; // interval at which to refresh lcd (milliseconds)
 
 // create an instance of the library
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
@@ -57,8 +58,9 @@ void setupDisplay()
   tft.setRotation(3);
   tft.setFont();
   tft.fillScreen(Display_Background_Color);
-  tft.setTextColor(Display_Text_Color);
-  tft.setTextSize(1);
+  // tft.setTextColor(Display_Text_Color);
+  // tft.setTextSize(1);
+  tft.setTextWrap(false);
 
   current_page = 0;
   last_page = -1;
@@ -164,9 +166,7 @@ void updateOnEncoderRotation()
 
       // limit to maximum acceleration
       if (ms < shortCutoff)
-      {
         ms = shortCutoff;
-      }
 
       float ticksActual_float = a * ms + b;
       deltaTicks = (long)ticksActual_float * (encoderNewPos - encoderLastPos);
@@ -351,7 +351,7 @@ void printTextOnScreen(int textSize, int cursorX, int cursorY, const char *prevT
   }
   tft.setCursor(cursorX, cursorY);
   tft.setTextColor(Display_Text_Color);
-  tft.print(newText); // print new text
+  tft.print(newText); // print new text.
 }
 
 // Note: checkEncoderButton() and checkEncoderRotation() were written for future implementation to make maintaining the code easier.
@@ -379,9 +379,7 @@ int8_t checkEncoderRotation()
 
       // limit to maximum acceleration
       if (ms < shortCutoff)
-      {
         ms = shortCutoff;
-      }
 
       float ticksActual_float = a * ms + b;
       deltaTicks = (long)ticksActual_float * (encoderNewPos - encoderLastPos);

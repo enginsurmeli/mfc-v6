@@ -37,7 +37,7 @@ void readFlowRate()
     flow_rate = calibration_coeff_a1 * pow(average, 2) + calibration_coeff_b1 * average + calibration_coeff_c1;
   else
     flow_rate = calibration_coeff_a2 * pow(average, 2) + calibration_coeff_b2 * average + calibration_coeff_c2;
-  mfc_pv = flow_rate * gas_multiplier[gas_list_index];
+  mfc_pv = round(flow_rate * gas_multiplier[gas_list_index]);
   mfc_pv = constrain(mfc_pv, 0, max_setpoint);
   // if (mfc_pv < 0) mfc_pv = 0;
   // mfc_pv = average;  // For testing purposes, always shows flow rate at 0.
