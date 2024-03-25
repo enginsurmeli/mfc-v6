@@ -91,14 +91,23 @@ void runPID()
     return;
   }
 
-  if (mfc_pv < 1 && mfc_output < 50.0)
-  {
-    mfcPID.SetTunings(aggKp, aggKi, aggKd);
-  }
-  else
-  {
+  // if (mfc_pv < 1 && mfc_output < 50.0)
+  // {
+  //   mfcPID.SetTunings(aggKp, aggKi, aggKd);
+  // }
+  // else
+  // {
+  //   mfcPID.SetTunings(consKp, consKi, consKd);
+  // }
+
+  if (abs(mfc_sv - mfc_pv) <= 1)
     mfcPID.SetTunings(consKp, consKi, consKd);
-  }
+
+  if (abs(mfc_sv - mfc_pv) > 1)
+    mfcPID.SetTunings(aggKp, aggKi, aggKd);
+
+  if (mfc_pv <= 1 && mfc_output < 150.0)
+    mfcPID.SetTunings(100.0 * aggKp, 100.0 * aggKi, 100.0 * aggKd);
 
   digitalWrite(HIGHpin, HIGH);
   mfcPID.SetMode(mfcPID.Control::automatic);

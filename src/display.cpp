@@ -8,7 +8,7 @@ bool change_setpoint_active, select_gas_active;
 float prev_mfc_sv, prev_mfc_pv, temp_mfc_sv;
 
 unsigned long previousMillis_lcd;                             // previousMillis: will store last time lcd was updated
-const uint16_t lcd_refresh_rate = 10;                         // refresh rate of lcd (Hz)
+const uint16_t lcd_refresh_rate = 5;                          // refresh rate of lcd (Hz)
 unsigned long lcd_refresh_interval = 1000 / lcd_refresh_rate; // interval at which to refresh lcd (milliseconds)
 
 // create an instance of the library
