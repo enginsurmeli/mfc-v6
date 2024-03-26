@@ -3,10 +3,10 @@
 float mfc_sv, mfc_pv, mfc_output, max_setpoint;
 
 // Define the tuning parameters for MFC controls:
-float consKp = 0.12, consKi = 0.16, consKd = 0.00;
+float consKp = 0.05, consKi = 0.03, consKd = 0.00;
 float aggKp = 1.5, aggKi = 2.0, aggKd = 0;
 
-// const uint32_t pid_sample_time = 100;  // in milliseconds.
+// const uint32_t pid_sample_time = 10; // in milliseconds.
 
 // Define variables for setpoint ramp rate
 float targetSetpoint = 0.0;
@@ -62,7 +62,7 @@ void setupPID()
   mfcPID.SetProportionalMode(mfcPID.pMode::pOnError);
   mfcPID.SetAntiWindupMode(mfcPID.iAwMode::iAwCondition);
   mfcPID.SetDerivativeMode(mfcPID.dMode::dOnMeas);
-  // mfcPID.SetSampleTimeUs(pid_sample_time * 1000);  // Convert pid_sample_time units from milliseconds to microseconds.
+  // mfcPID.SetSampleTimeUs(pid_sample_time * 1000); // Convert pid_sample_time units from milliseconds to microseconds.
 
   InitTimersSafe(12000); // initialize all timers except for 0, to save time keeping functions
 
@@ -106,8 +106,8 @@ void runPID()
   if (abs(mfc_sv - mfc_pv) > 1)
     mfcPID.SetTunings(aggKp, aggKi, aggKd);
 
-  if (mfc_pv <= 1 && mfc_output < 150.0)
-    mfcPID.SetTunings(100.0 * aggKp, 100.0 * aggKi, 100.0 * aggKd);
+  if (mfc_pv <= 1 && mfc_output < 100.0)
+    mfcPID.SetTunings(10.0 * aggKp, aggKi, aggKd);
 
   digitalWrite(HIGHpin, HIGH);
   mfcPID.SetMode(mfcPID.Control::automatic);
