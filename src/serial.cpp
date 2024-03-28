@@ -144,10 +144,10 @@ void serialListen()
           mfcPID.SetProportionalMode(mfcPID.pMode::pOnError);
           break;
         case 1:
-          mfcPID.SetProportionalMode(mfcPID.pMode::pOnErrorMeas);
+          mfcPID.SetProportionalMode(mfcPID.pMode::pOnMeas);
           break;
         case 2:
-          mfcPID.SetProportionalMode(mfcPID.pMode::pOnMeas);
+          mfcPID.SetProportionalMode(mfcPID.pMode::pOnErrorMeas);
           break;
         default:
           break;
@@ -181,10 +181,28 @@ void serialListen()
         sprintf(write_string, "iAwMode+%i", mfcPID.GetAwMode());
       } // TODO: -add change and read gas option over serial.
         //       -add change and read pid sample time.
-        //       -add change and read pid Dmode.
         //       -add change and read serial device id.
         //       -add change and read totalizer time.
         //       -add change and read screen refresh frequency.
+      else if (!strcmp(message_array[0], "dMode"))
+      {
+        switch (atoi(message_array[1]))
+        {
+        case 0:
+          mfcPID.SetDerivativeMode(mfcPID.dMode::dOnError);
+          break;
+        case 1:
+          mfcPID.SetDerivativeMode(mfcPID.dMode::dOnMeas);
+          break;
+        default:
+          break;
+        }
+        sprintf(write_string, "dMode+%i", mfcPID.GetDmode());
+      }
+      else if (!strcmp(message_array[0], "dMode?"))
+      {
+        sprintf(write_string, "dMode+%i", mfcPID.GetDmode());
+      }
       else
       {
         strncpy(write_string, "error", SERIAL_MAX_MESSAGE_LENGTH - 1);
