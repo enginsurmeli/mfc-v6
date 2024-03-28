@@ -6,7 +6,7 @@ float mfc_sv, mfc_pv, mfc_output, max_setpoint;
 float consKp = 0.05, consKi = 0.03, consKd = 0.00;
 float aggKp = 0.1, aggKi = 0.24, aggKd = 0.05;
 
-const uint32_t pid_sample_time = 10; // in milliseconds.
+const uint32_t pid_sample_time = 1; // in milliseconds.
 
 // Define variables for setpoint ramp rate
 float targetSetpoint = 0.0;
@@ -58,10 +58,13 @@ void setupPID()
     max_setpoint = 9999.9;
 
   // Set PID tune parameters:
-  mfcPID.SetTunings(aggKp, aggKi, aggKd);
+  // mfcPID.SetTunings(aggKp, aggKi, aggKd);
+  mfcPID.SetTunings(consKp, consKi, consKd);
   mfcPID.SetProportionalMode(mfcPID.pMode::pOnError);
   mfcPID.SetAntiWindupMode(mfcPID.iAwMode::iAwCondition);
   mfcPID.SetDerivativeMode(mfcPID.dMode::dOnMeas);
+  mfcPID.SetOutputLimits(100, 255);
+  mfcPID.SetMode(mfcPID.Control::automatic);
   mfcPID.SetSampleTimeUs(pid_sample_time * 1000); // Convert pid_sample_time units from milliseconds to microseconds.
 
   InitTimersSafe(12000); // initialize all timers except for 0, to save time keeping functions
@@ -91,14 +94,14 @@ void runPID()
     return;
   }
 
-  if (mfc_pv < 1)
-  {
-    mfcPID.SetTunings(aggKp, aggKi, aggKd);
-  }
-  else
-  {
-    mfcPID.SetTunings(consKp, consKi, consKd);
-  }
+  // if (mfc_pv < 1)
+  // {
+  //   mfcPID.SetTunings(aggKp, aggKi, aggKd);
+  // }
+  // else
+  // {
+  //   mfcPID.SetTunings(consKp, consKi, consKd);
+  // }
 
   // if (mfc_sv / (mfc_pv + 1) <= 1)
   //   mfcPID.SetTunings(consKp, consKi, consKd);
@@ -109,8 +112,8 @@ void runPID()
   // if (mfc_pv <= 1 && mfc_output < 100.0)
   //   mfcPID.SetTunings(10.0 * aggKp, aggKi, aggKd);
 
-  digitalWrite(HIGHpin, HIGH);
-  mfcPID.SetMode(mfcPID.Control::automatic);
+  // digitalWrite(HIGHpin, HIGH);
+  // mfcPID.SetMode(mfcPID.Control::automatic);
   mfcPID.Compute();
   pwmWrite(MFCOutPin, mfc_output);
 }
