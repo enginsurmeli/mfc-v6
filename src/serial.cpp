@@ -203,12 +203,21 @@ void serialStream()
   {
     previousMillis_serial = currentMillis_print;
 
-    dtostrf(mfc_pv, 4, 2, buffer1);
-    dtostrf(mfc_sv, 4, 2, buffer2);
-    dtostrf(mfc_output, 4, 2, buffer3);
-    // sprintf(write_string, "A+%s", buffer1);
-    sprintf(write_string, "A+%s, AS+%s, PID+%s", buffer1, buffer2, buffer3);
-    Serial.println(write_string);
+    // dtostrf(mfc_pv, 4, 2, buffer1);
+    // dtostrf(mfc_sv, 4, 2, buffer2);
+    // dtostrf(mfc_output, 4, 2, buffer3);
+    // // sprintf(write_string, "A+%s", buffer1);
+    // sprintf(write_string, "A+%s, AS+%s, PID+%s", buffer1, buffer2, buffer3);
+    // Serial.println(write_string);
+
+    Serial.print("Flow:");
+    Serial.print(mfc_pv);
+    Serial.print(",");
+    Serial.print("Setpoint:");
+    Serial.print(mfc_sv);
+    Serial.print(",");
+    Serial.print("Output:");
+    Serial.println(mfc_output);
   }
 }
 

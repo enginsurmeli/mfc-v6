@@ -63,8 +63,8 @@ void setupPID()
   mfcPID.SetProportionalMode(mfcPID.pMode::pOnError);
   mfcPID.SetAntiWindupMode(mfcPID.iAwMode::iAwCondition);
   mfcPID.SetDerivativeMode(mfcPID.dMode::dOnMeas);
-  mfcPID.SetOutputLimits(100, 255);
-  mfcPID.SetMode(mfcPID.Control::automatic);
+  // mfcPID.SetOutputLimits(100, 255);
+  // mfcPID.SetMode(mfcPID.Control::automatic);
   mfcPID.SetSampleTimeUs(pid_sample_time * 1000); // Convert pid_sample_time units from milliseconds to microseconds.
 
   InitTimersSafe(12000); // initialize all timers except for 0, to save time keeping functions
@@ -112,8 +112,8 @@ void runPID()
   // if (mfc_pv <= 1 && mfc_output < 100.0)
   //   mfcPID.SetTunings(10.0 * aggKp, aggKi, aggKd);
 
-  // digitalWrite(HIGHpin, HIGH);
-  // mfcPID.SetMode(mfcPID.Control::automatic);
+  digitalWrite(HIGHpin, HIGH);
+  mfcPID.SetMode(mfcPID.Control::automatic);
   mfcPID.Compute();
   pwmWrite(MFCOutPin, mfc_output);
 }
